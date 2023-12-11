@@ -36,7 +36,7 @@ namespace ReservationApp.DataAccessUnit
         }
         public List<City> GetAllCities() 
         {
-            var cities = _connection.Cities.Include(c=> c.Photos).ToList();
+            var cities = _connection.Cities.Include(c=> c.Photos).ToList(); //FK
             return cities;
         }
     }

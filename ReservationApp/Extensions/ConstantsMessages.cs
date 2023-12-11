@@ -24,7 +24,14 @@
         public static string AlreadyUserExist = "User already exists";
         public static string RegisterFail = "Register Falied";
         public static string Unauthorize = "Unauthorize";
-
+        public static string CompanyAdded = "Company added successfully";
+        public static string CompanyDeleted = "Company deleted";
+        public static string CompanyUpdated = "Company updated";
+        public static string CompanyAddError = "Company added error";
+        public static string CompanyDeleteError = "Company delete error";
+        public static string CompanyUpdateError = "Company update error";
+        public static string ThisCityNoHaveCompany = "This city hasn't company";
+        public static string CompanyNotFound = "Company not found";
 
     }
 }
