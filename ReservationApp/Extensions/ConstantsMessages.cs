@@ -32,6 +32,15 @@
         public static string CompanyUpdateError = "Company update error";
         public static string ThisCityNoHaveCompany = "This city hasn't company";
         public static string CompanyNotFound = "Company not found";
+        public static string ReservationAdded = "Reservation added successfully";
+        public static string ReservationDeleted = "Reservation canceled";
+        public static string ReservationUpdated = "Reservation updated";
+        public static string ReservationAddError = "Reservation added error";
+        public static string ReservationDateTimeError = "You can not reservation this date";
+        public static string ReservationDeleteError = "Reservation delete error";
+        public static string ReservationUpdateError = "Reservation update error";
+        public static string ReservationListed = "Reservation listed";
+        public static string ReservationListeError = "Reservation list error";
 
     }
 }

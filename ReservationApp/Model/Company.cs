@@ -12,6 +12,8 @@
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int MaxReservationDayLength { get; set; }
+
         public List<Photo> Photos { get; set; }
 
     }
