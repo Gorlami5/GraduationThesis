@@ -22,8 +22,7 @@ namespace ReservationApp.BusinessUnit
             {
                //companyId ve resStart ve resEnd kontrolü yapılacak.
                //Eğer aynı durumda bir rezervasyon varsa Ekleme yapamayacak.
-               //Company tarafına DateTime tipinde kolon eklenecek ve rez yapılmayacak tarihleri tutacak!!!
-               //Yine company tarafına MaxRezDateLength eklenecek fazlası olursa rez yapılmayacak.
+              
                if(res.CompanyId == reservation.CompanyId)
                 {
                     if(reservation.ReservationStartDate >= res.ReservationStartDate && reservation.ReservationEndDate <= res.ReservationEndDate)
@@ -32,6 +31,12 @@ namespace ReservationApp.BusinessUnit
                     }
 
                 }
+            }
+            var company = _reservationDataAccess.GetCompanyById(reservation.CompanyId);
+            var reservationInterval = reservation.ReservationStartDate - reservation.ReservationEndDate;
+            if(reservationInterval.Days > company.MaxReservationDayLength)
+            {
+                return new ErrorResult(ConstantsMessages.MaxReservationDayError); 
             }
             var result = _reservationDataAccess.Add(reservation);
             if(result >  0)

@@ -43,7 +43,7 @@ namespace ReservationApp.Controllers
             return _reservationBusinessUnit.GetReservationByUserId(userId);
         }
         [HttpGet]
-        [Route("GetReservationListByUserId")]
+        [Route("GetReservationByUserId")]
         public DataResult<Reservation> GetReservationById(int id)
         {
             return _reservationBusinessUnit.GetReservationById(id);

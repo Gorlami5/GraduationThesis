@@ -41,6 +41,7 @@
         public static string ReservationUpdateError = "Reservation update error";
         public static string ReservationListed = "Reservation listed";
         public static string ReservationListeError = "Reservation list error";
+        public static string MaxReservationDayError = "Max Day Reservation Error";
 
     }
 }

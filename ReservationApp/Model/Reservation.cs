@@ -12,5 +12,7 @@
         public int ReservationStatus { get; set;}
         public Photo CompanyMainPhoto { get; set; }
 
+        public int PersonCount { get; set; }
+
     }
 }

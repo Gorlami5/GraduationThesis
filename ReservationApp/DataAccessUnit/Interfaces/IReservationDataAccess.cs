@@ -10,5 +10,6 @@ namespace ReservationApp.DataAccessUnit.Interfaces
         Reservation GetReservationById(int reservationId);
         List<Reservation> GetReservationByUserId(int userId);
         List<Reservation> GetAll();
+        Company GetCompanyById(int companyId);
     }
 }

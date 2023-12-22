@@ -7,11 +7,10 @@ namespace ReservationApp.DataAccessUnit
 {
     public class ReservationDataAccess :IReservationDataAccess
     {
-        private readonly IReservationDataAccess _reservationDataAccess;
+       
         private readonly PostgreDbConnection _connection;
-        public ReservationDataAccess(IReservationDataAccess reservationDataAccess, PostgreDbConnection postgreDbConnection)
-        {
-            _reservationDataAccess = reservationDataAccess;
+        public ReservationDataAccess( PostgreDbConnection postgreDbConnection)
+        {         
             _connection = postgreDbConnection;
         }
 
@@ -44,6 +43,11 @@ namespace ReservationApp.DataAccessUnit
         {
             var reservations = _connection.Reservations.ToList();
             return reservations;
+        }
+        public Company GetCompanyById(int companyId)
+        {
+            var company = _connection.Companies.Where(c => c.Id == companyId).FirstOrDefault();
+            return company;
         }
     }
 }
