@@ -18,11 +18,14 @@ namespace ReservationApp.BusinessUnit
         }
         public Results.IResult Add(City city)
         {
+            //ekleme yaparken Photolist null gönderilecek.
            var alreadyExistsCity = _cityDataAccess.GetCityById(city.Id);
-
-           if (alreadyExistsCity.Name == city.Name)
+            if(alreadyExistsCity != null)
             {
-                return new ErrorResult(ConstantsMessages.alreadyExistsCity);
+                if (alreadyExistsCity.Name == city.Name)
+                {
+                    return new ErrorResult(ConstantsMessages.alreadyExistsCity);
+                }
             }
             var result = _cityDataAccess.Add(city);
             if(result > 0)
@@ -59,7 +62,7 @@ namespace ReservationApp.BusinessUnit
                     Id = city.Id,
                     Name = city.Name,
                     Description = city.Description,
-                    PhotoUrl = city.Photos.FirstOrDefault(p=>p.IsMain == true).Url
+                    PhotoUrl = city.Photos.FirstOrDefault(p => p.IsMain == true).Url
                 };
                 
               cityForListDtos.Add(cityForList);

@@ -64,13 +64,15 @@ namespace ReservationApp.BusinessUnit
             {
                 foreach(var reservation in reservations)
                 {
+                    var company = _reservationDataAccess.GetCompanyById(reservation.CompanyId);
+
                        ReservationForListDto reservationDto = new ReservationForListDto()
                        {
                            CityName = reservation.CityName,
                            CompanyName = reservation.CompanyName,
                            ReservationStartDate = reservation.ReservationStartDate,
                            ReservationEndDate = reservation.ReservationEndDate,
-                           CompanyMainPhoto = reservation.CompanyMainPhoto, //Logic hatası var bu photo durumunda
+                           Url = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url, //Logic hatası var bu photo durumunda
                        };
                     reservationList.Add(reservationDto);
                 }

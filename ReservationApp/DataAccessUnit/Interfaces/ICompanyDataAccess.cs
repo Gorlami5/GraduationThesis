@@ -11,6 +11,7 @@ namespace ReservationApp.DataAccessUnit.Interfaces
 
         public List<Company> GetCompaniesByCityId(int cityId);
         public Company GetCompanyById(int companyId);
+        City GetCityById(int id);
 
 
 

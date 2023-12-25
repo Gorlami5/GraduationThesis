@@ -137,5 +137,97 @@ namespace ReservationApp.BusinessUnit
 
 
         }
+        public DataResult<CompanyPhotoForReturnDto> AddCompanyPhotoForCompany(int cityId, CompanyPhotoForCreationDto companyPhotoForCreationDto)
+        {
+            var city = _cityDataAccess.GetCityById(cityId);
+            if (city == null)
+            {
+                return new ErrorDataResult<CompanyPhotoForReturnDto>(ConstantsMessages.CityNotFound);
+            }
+            //var currentuserıd = int.parse(_httpcontextaccessor.httpcontext.user.findfirst(claimtypes.nameıdentifier).value);
+
+            //if (currentuserıd != city.userıd)
+            //{
+            //    return new errordataresult<photoforreturndto>(constantsmessages.unauthorize);
+            //}
+            var file = companyPhotoForCreationDto.file;
+            var uploadResult = new ImageUploadResult();
+            if (file.Length > 0)
+            {
+                using (var stream = file.OpenReadStream())
+                {
+                    var uploadParams = new ImageUploadParams
+                    {
+                        File = new FileDescription(file.Name, stream)
+                    };
+
+                    uploadResult = cloudinary.Upload(uploadParams);
+                }
+
+            }
+            companyPhotoForCreationDto.Url = uploadResult.Uri.ToString();
+            companyPhotoForCreationDto.PublicId = uploadResult.PublicId;
+
+            Photo photo = new Photo()
+            {
+                Url = companyPhotoForCreationDto.Url,
+                Description = companyPhotoForCreationDto.Description,
+                DateAdded = companyPhotoForCreationDto.DateAdded,
+                PublicId = companyPhotoForCreationDto.PublicId,
+                City = city
+            };
+            if (!city.Photos.Any(p => p.IsMain))
+            {
+                photo.IsMain = true;
+            }
+            var result = _photoDataAccess.AddPhoto(photo);
+            if (result > 0)
+            {
+
+                CompanyPhotoForReturnDto companyPhotoForReturnDto = new CompanyPhotoForReturnDto()
+                {
+                    Id = photo.Id,
+                    Url = photo.Url,
+                    Description = photo.Description,
+                    DateAdded = photo.DateAdded,
+                    PublicId = photo.PublicId,
+                    IsMain = photo.IsMain,
+                };
+
+                return new SuccessDataResult<CompanyPhotoForReturnDto>(companyPhotoForReturnDto, ConstantsMessages.PhotoAdded);
+
+            }
+
+            return new ErrorDataResult<CompanyPhotoForReturnDto>(ConstantsMessages.PhotoAddError);
+
+
+
+
+        }
+        public DataResult<Photo> GetCompanyPhotoByCompanyId(int companyId)
+        {
+            var photo = _photoDataAccess.GetPhotoByCityId(companyId);
+            if (photo == null)
+            {
+                return new ErrorDataResult<Photo>(ConstantsMessages.PhotoNotFound);
+            }
+            return new SuccessDataResult<Photo>(photo, ConstantsMessages.PhotoListed);
+
+        }
+        public DataResult<CompanyPhotoForReturnDto> GetCompanyPhotoById(int id)
+        {
+            var photo = GetPhotoByCityId(id);
+            CompanyPhotoForReturnDto companyPhotoForReturnDto = new CompanyPhotoForReturnDto()
+            {
+                Id = photo.Data.Id,
+                Url = photo.Data.Url,
+                Description = photo.Data.Description,
+                DateAdded = photo.Data.DateAdded,
+                PublicId = photo.Data.PublicId,
+                IsMain = photo.Data.IsMain,
+            };
+            return new SuccessDataResult<CompanyPhotoForReturnDto>(companyPhotoForReturnDto);
+
+        }
     }
 }

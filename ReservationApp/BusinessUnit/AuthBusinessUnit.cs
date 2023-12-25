@@ -48,7 +48,7 @@ namespace ReservationApp.BusinessUnit
                 return new ErrorDataResult<string>(ConstantsMessages.LoginError);
             }
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("JWTSettings:Token").Value);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
@@ -57,7 +57,7 @@ namespace ReservationApp.BusinessUnit
                     new Claim (ClaimTypes.Email,userToLogin.Data.Email)
                }),
                 Expires = DateTime.Now.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
@@ -73,6 +73,8 @@ namespace ReservationApp.BusinessUnit
             var createToUser = new User()
             {
                 Email = userForRegisterDto.Email,
+                UserName = userForRegisterDto.UserName,
+                UserSurname = userForRegisterDto.UserSurname
             };
             var createdUser = UserForRegister(createToUser, userForRegisterDto.Password);
             if(createdUser.Data == null)

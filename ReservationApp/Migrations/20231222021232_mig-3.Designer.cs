@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReservationApp.Context;
@@ -11,9 +12,11 @@ using ReservationApp.Context;
 namespace ReservationApp.Migrations
 {
     [DbContext(typeof(PostgreDbConnection))]
-    partial class PostgreDbConnectionModelSnapshot : ModelSnapshot
+    [Migration("20231222021232_mig-3")]
+    partial class mig3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,44 +76,7 @@ namespace ReservationApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
                     b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("ReservationApp.Model.CompanyPhoto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("CompanyPhotos");
                 });
 
             modelBuilder.Entity("ReservationApp.Model.Photo", b =>
@@ -124,10 +90,14 @@ namespace ReservationApp.Migrations
                     b.Property<int>("CityId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsMain")
@@ -137,6 +107,9 @@ namespace ReservationApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
@@ -144,6 +117,11 @@ namespace ReservationApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ReservationId")
+                        .IsUnique();
 
                     b.ToTable("Photos");
                 });
@@ -220,28 +198,6 @@ namespace ReservationApp.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ReservationApp.Model.Company", b =>
-                {
-                    b.HasOne("ReservationApp.Model.City", "City")
-                        .WithMany("Companies")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-                });
-
-            modelBuilder.Entity("ReservationApp.Model.CompanyPhoto", b =>
-                {
-                    b.HasOne("ReservationApp.Model.Company", "Company")
-                        .WithMany("CompanyPhotos")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
             modelBuilder.Entity("ReservationApp.Model.Photo", b =>
                 {
                     b.HasOne("ReservationApp.Model.City", "City")
@@ -250,19 +206,39 @@ namespace ReservationApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ReservationApp.Model.Company", "Company")
+                        .WithMany("Photos")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReservationApp.Model.Reservation", "Reservations")
+                        .WithOne("CompanyMainPhoto")
+                        .HasForeignKey("ReservationApp.Model.Photo", "ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("City");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("ReservationApp.Model.City", b =>
                 {
-                    b.Navigation("Companies");
-
                     b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("ReservationApp.Model.Company", b =>
                 {
-                    b.Navigation("CompanyPhotos");
+                    b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("ReservationApp.Model.Reservation", b =>
+                {
+                    b.Navigation("CompanyMainPhoto")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

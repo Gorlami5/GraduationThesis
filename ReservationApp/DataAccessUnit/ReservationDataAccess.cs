@@ -36,7 +36,7 @@ namespace ReservationApp.DataAccessUnit
         }
         public List<Reservation> GetReservationByUserId(int userId)
         {
-            var reservation = _connection.Reservations.Include(r=>r.CompanyMainPhoto).Where(r=>r.UserId == userId).ToList();
+            var reservation = _connection.Reservations.Where(r=>r.UserId == userId).ToList();
             return reservation;
         }
         public List<Reservation> GetAll()

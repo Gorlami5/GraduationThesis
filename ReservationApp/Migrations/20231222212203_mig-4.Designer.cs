@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReservationApp.Context;
@@ -11,9 +12,11 @@ using ReservationApp.Context;
 namespace ReservationApp.Migrations
 {
     [DbContext(typeof(PostgreDbConnection))]
-    partial class PostgreDbConnectionModelSnapshot : ModelSnapshot
+    [Migration("20231222212203_mig-4")]
+    partial class mig4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,44 +76,7 @@ namespace ReservationApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
                     b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("ReservationApp.Model.CompanyPhoto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("CompanyPhotos");
                 });
 
             modelBuilder.Entity("ReservationApp.Model.Photo", b =>
@@ -124,10 +90,14 @@ namespace ReservationApp.Migrations
                     b.Property<int>("CityId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsMain")
@@ -144,6 +114,8 @@ namespace ReservationApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Photos");
                 });
@@ -161,6 +133,9 @@ namespace ReservationApp.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CompanyMainPhotoId")
                         .HasColumnType("integer");
 
                     b.Property<string>("CompanyName")
@@ -183,6 +158,8 @@ namespace ReservationApp.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyMainPhotoId");
 
                     b.ToTable("Reservations");
                 });
@@ -220,28 +197,6 @@ namespace ReservationApp.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ReservationApp.Model.Company", b =>
-                {
-                    b.HasOne("ReservationApp.Model.City", "City")
-                        .WithMany("Companies")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-                });
-
-            modelBuilder.Entity("ReservationApp.Model.CompanyPhoto", b =>
-                {
-                    b.HasOne("ReservationApp.Model.Company", "Company")
-                        .WithMany("CompanyPhotos")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
             modelBuilder.Entity("ReservationApp.Model.Photo", b =>
                 {
                     b.HasOne("ReservationApp.Model.City", "City")
@@ -250,19 +205,32 @@ namespace ReservationApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ReservationApp.Model.Company", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("CompanyId");
+
                     b.Navigation("City");
+                });
+
+            modelBuilder.Entity("ReservationApp.Model.Reservation", b =>
+                {
+                    b.HasOne("ReservationApp.Model.Photo", "CompanyMainPhoto")
+                        .WithMany()
+                        .HasForeignKey("CompanyMainPhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CompanyMainPhoto");
                 });
 
             modelBuilder.Entity("ReservationApp.Model.City", b =>
                 {
-                    b.Navigation("Companies");
-
                     b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("ReservationApp.Model.Company", b =>
                 {
-                    b.Navigation("CompanyPhotos");
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

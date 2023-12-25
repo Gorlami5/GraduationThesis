@@ -12,5 +12,7 @@ namespace ReservationApp.BusinessUnit.Interfaces
         public DataResult<Company> GetCompanyById(int id);  
         public DataResult<List<CompanyForListDto>> GetCompanyListByCityId(int cityId);
         public DataResult<List<CompanyForListDto>> GetAllCompany();
+        DataResult<List<CompanyForListDto>> GetCompanyListByCity(int cityId);
+
     }
 }

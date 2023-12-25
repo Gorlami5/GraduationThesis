@@ -8,6 +8,6 @@ namespace ReservationApp.Dto
         public string CityName { get; set; }
         public DateTime ReservationStartDate { get; set; }
         public DateTime ReservationEndDate { get; set; }
-        public Photo CompanyMainPhoto { get; set; }
+        public string Url { get; set; }
     }
 }

@@ -26,13 +26,13 @@ namespace ReservationApp.DataAccessUnit
 
         public List<Company> GetAllCompanies()
         {
-            var companyList = _connection.Companies.Include(c => c.Photos).ToList(); //Fk ayarları!!
+            var companyList = _connection.Companies.Include(c => c.CompanyPhotos).ToList(); //Fk ayarları!!(yapıldı)
             return companyList;
         }
 
         public List<Company> GetCompaniesByCityId(int cityId)
         {
-            var companyList = _connection.Companies.Include(c=>c.Photos).Where(c=> c.Id == cityId).ToList(); //Fk ayarlarını unutma.
+            var companyList = _connection.Companies.Include(c=>c.CompanyPhotos).Where(c=> c.Id == cityId).ToList(); //Fk ayarlarını unutma.(yapıldı)
             return companyList;
         }
 
@@ -46,6 +46,11 @@ namespace ReservationApp.DataAccessUnit
         {
             var company = _connection.Companies.Where(c => c.Id == companyId).FirstOrDefault();
             return company;
+        }
+        public City GetCityById(int id)
+        {
+            var city = _connection.Cities.Where(c => c.Id == id).FirstOrDefault();
+            return city;
         }
     }
 }

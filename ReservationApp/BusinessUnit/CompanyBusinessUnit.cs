@@ -19,11 +19,14 @@ namespace ReservationApp.BusinessUnit
         public Result Add(Company company)
         {
             var company1 = _companyDataAccess.GetCompanyById(company.Id);
-            if(company1.Name == company.Name)
+            if(company1 != null)
             {
-                return new ErrorResult(ConstantsMessages.CompanyAddError);
+                if (company1.Name == company.Name)
+                {
+                    return new ErrorResult(ConstantsMessages.CompanyAddError);
+                }
             }
-
+           
             var result = _companyDataAccess.Add(company); //Aynı isimle ekleyemezsiniz kontrolü yapılmalı.
             if(result>0)
             {
@@ -57,7 +60,7 @@ namespace ReservationApp.BusinessUnit
                     Id = company.Id,
                     Name = company.Name,
                     Description = company.Description,
-                    PhotoUrl = company.Photos.FirstOrDefault(p => p.IsMain == true).Url
+                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url
                 };
 
             result.Add(companyForListDto);
@@ -81,7 +84,7 @@ namespace ReservationApp.BusinessUnit
             var companyList = _companyDataAccess.GetCompaniesByCityId(cityId);
             if(companyList.Count == 0)
             {
-                return new SuccessDataResult<List<CompanyForListDto>>(ConstantsMessages.ThisCityNoHaveCompany);
+                return new ErrorDataResult<List<CompanyForListDto>>(ConstantsMessages.ThisCityNoHaveCompany);
             }
             List<CompanyForListDto> result = new List<CompanyForListDto>();
             foreach (var company in companyList)
@@ -91,7 +94,7 @@ namespace ReservationApp.BusinessUnit
                     Id = company.Id,
                     Name = company.Name,
                     Description = company.Description,
-                    PhotoUrl = company.Photos.FirstOrDefault(p => p.IsMain == true).Url
+                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url
                    
                 };
 
@@ -108,6 +111,28 @@ namespace ReservationApp.BusinessUnit
                 return new SuccessResult(ConstantsMessages.CompanyUpdated);
             }
             return new ErrorResult(ConstantsMessages.CompanyUpdateError);
+        }
+        public DataResult<List<CompanyForListDto>> GetCompanyListByCity(int cityId)
+        {
+            List<CompanyForListDto> result = new List<CompanyForListDto>();
+            var city = _companyDataAccess.GetCityById(cityId);
+            if (city == null)
+            {
+                return new ErrorDataResult<List<CompanyForListDto>>(ConstantsMessages.CityNotFound);
+            }
+            foreach(var company in city.Companies)
+            {
+                CompanyForListDto companyForListDto = new CompanyForListDto()
+                {
+                    Id = company.Id,
+                    Name = company.Name,
+                    Description = company.Description,
+                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url
+
+                };
+                result.Add(companyForListDto);
+            }
+            return new SuccessDataResult<List<CompanyForListDto>>(result, "Listed success");
         }
     }
 }

@@ -10,8 +10,6 @@
         public DateTime ReservationStartDate { get; set; }
         public DateTime ReservationEndDate { get; set;}
         public int ReservationStatus { get; set;}
-        public Photo CompanyMainPhoto { get; set; }
-
         public int PersonCount { get; set; }
 
     }

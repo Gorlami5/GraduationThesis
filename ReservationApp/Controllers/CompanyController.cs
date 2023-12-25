@@ -59,5 +59,12 @@ namespace ReservationApp.Controllers
             var result = _companyBusinessUnit.GetCompanyById(id);
             return result;
         }
+        [HttpGet]
+        [Route("GetCompanyListByCity")]
+        public DataResult<List<CompanyForListDto>> GetCompanyListByCity(int id)
+        {
+            var result = _companyBusinessUnit.GetCompanyListByCity(id);
+            return result;
+        }
     }
 }
