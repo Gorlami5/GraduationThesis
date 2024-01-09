@@ -38,6 +38,12 @@ namespace ReservationApp.Controllers
             var result = _authBusinessUnit.GetActiveSessionByToken(token);
             return result;
         }
+        [HttpPost]
+        [Route("Logout")]
+        public Result Logout(string token)
+        {
+            return _authBusinessUnit.Logout(token);
+        }
 
 
     }

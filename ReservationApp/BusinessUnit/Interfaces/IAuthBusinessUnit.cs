@@ -16,5 +16,6 @@ namespace ReservationApp.BusinessUnit.Interfaces
 
         public DataResult<string> Login(UserForLoginDto userForLoginDto);
         DataResult<Session> GetActiveSessionByToken(string token);
+        Result Logout(string token);
     }
 }

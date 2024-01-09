@@ -42,6 +42,12 @@
         public static string ReservationListed = "Reservation listed";
         public static string ReservationListeError = "Reservation list error";
         public static string MaxReservationDayError = "Max Day Reservation Error";
+        public static string EmptySessionNotCreated = "Empty session could not be created";
+        public static string OldSessionNotCreated = "Old session could not be updated";
+        public static string SessionNotCompleted = "Session could not be completed";
+        public static string SessionNotFound = "Session not found";
+        public static string LogoutSuccess = "Logout success";
+        public static string LogoutFailed = "Logout failed";
 
     }
 }

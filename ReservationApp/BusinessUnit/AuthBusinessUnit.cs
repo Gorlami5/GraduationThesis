@@ -43,11 +43,11 @@ namespace ReservationApp.BusinessUnit
         public DataResult<string> Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin = UserForLogin(userForLoginDto.Email, userForLoginDto.Password);
-            int userId2 = userToLogin.Data.Id;
             if (userToLogin == null)
             {
                 return new ErrorDataResult<string>(ConstantsMessages.LoginError);
             }
+            int userId2 = userToLogin.Data.Id;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("JWTSettings:Token").Value);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -62,59 +62,108 @@ namespace ReservationApp.BusinessUnit
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
+            //-------------------------------------------------Transaction Yapısı--------------------------------------------
 
-            DateTime myDateTime = DateTime.Now;
-            string formattedDateTime = myDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-            var emptySession = new Session()
+            using(var transaction = _connection.Database.BeginTransaction())
             {
-                CreateDate = formattedDateTime,
-            };
-            var emptySessionResult = _authDataAccess.SessionCreate(emptySession);
-            if(emptySessionResult < 1)
-            {
-                return new ErrorDataResult<string>(ConstantsMessages.alreadyExistsCity);
-            }
-            var oldSession = _authDataAccess.GetActiveSessionByUserId(userId2);
-            if (oldSession != null)
-            {
-                oldSession.IsActive = false;
-                var sessionUpdateResult = _authDataAccess.SessionUpdate(oldSession);
-                if(sessionUpdateResult < 1)
+                try
                 {
-                    return new ErrorDataResult<string>(ConstantsMessages.alreadyExistsCity);
+                    DateTime myDateTime = DateTime.Now;
+                    string formattedDateTime = myDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    var emptySession = new Session()
+                    {
+                        CreateDate = formattedDateTime,
+                    };
+                    var emptySessionResult = _authDataAccess.SessionCreate(emptySession);
+                    if (emptySessionResult < 1)
+                    {
+                        return new ErrorDataResult<string>(ConstantsMessages.EmptySessionNotCreated);
+                    }
+                  
+                    var oldSession = _authDataAccess.GetActiveSessionByUserId(userId2);
+                    if (oldSession != null)
+                    {
+                        oldSession.IsActive = false;
+                        var sessionUpdateResult = _authDataAccess.SessionUpdate(oldSession);
+                        if (sessionUpdateResult < 1)
+                        {
+                            return new ErrorDataResult<string>(ConstantsMessages.OldSessionNotCreated);
+                        }
+                    }
+                    emptySession.AccessToken = tokenString;
+                    emptySession.UserId = userId2;
+                    emptySession.IsActive = true;
+
+
+                    var sessionResult = _authDataAccess.SessionUpdate(emptySession);
+
+                    //var session = new Session()
+                    //{
+                    //    AccessToken = tokenString,
+                    //    CreateDate = DateTime.Now,
+                    //    IsActive = true,
+                    //    UserId = userToLogin.Data.Id
+                    //};
+
+                    //var sessionResult = _authDataAccess.SessionCreate(session);
+                    if (sessionResult < 1)
+                    {
+                        return new ErrorDataResult<string>(ConstantsMessages.SessionNotCompleted);
+                    }
+                    transaction.Commit();
+                    return new SuccessDataResult<string>(tokenString, ConstantsMessages.LoginSuccess);
+
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+                    return new ErrorDataResult<string>(ex.Message);
                 }
             }
-            emptySession.AccessToken = tokenString;
-            emptySession.UserId = userId2;
-            emptySession.IsActive = true;
-            
 
-            var sessionResult = _authDataAccess.SessionUpdate(emptySession);
-
-            //var session = new Session()
+            //DateTime myDateTime = DateTime.Now;
+            //string formattedDateTime = myDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            //var emptySession = new Session()
             //{
-            //    AccessToken = tokenString,
-            //    CreateDate = DateTime.Now,
-            //    IsActive = true,
-            //    UserId = userToLogin.Data.Id
+            //    CreateDate = formattedDateTime,
             //};
+            //var emptySessionResult = _authDataAccess.SessionCreate(emptySession);
+            //if (emptySessionResult < 1)
+            //{
+            //    return new ErrorDataResult<string>(ConstantsMessages.EmptySessionNotCreated);
+            //}
+            //var oldSession = _authDataAccess.GetActiveSessionByUserId(userId2);
+            //if (oldSession != null)
+            //{
+            //    oldSession.IsActive = false;
+            //    var sessionUpdateResult = _authDataAccess.SessionUpdate(oldSession);
+            //    if (sessionUpdateResult < 1)
+            //    {
+            //        return new ErrorDataResult<string>(ConstantsMessages.OldSessionNotCreated);
+            //    }
+            //}
+            //emptySession.AccessToken = tokenString;
+            //emptySession.UserId = userId2;
+            //emptySession.IsActive = true;
 
-            //var sessionResult = _authDataAccess.SessionCreate(session);
-            if (sessionResult < 1)
-            {
-                return new ErrorDataResult<string>(ConstantsMessages.alreadyExistsCity);
-            }
 
-            return new SuccessDataResult<string>(tokenString,ConstantsMessages.LoginSuccess);
+            //var sessionResult = _authDataAccess.SessionUpdate(emptySession);
+
+            //if (sessionResult < 1)
+            //{
+            //    return new ErrorDataResult<string>(ConstantsMessages.SessionNotCompleted);
+            //}
+
+            //return new SuccessDataResult<string>(tokenString, ConstantsMessages.LoginSuccess);
 
 
             //Login olunduğu durumda bir session oluşturulacak.Session tablosuna yeni bir session eklenecek.Active true olacak.
             //Tabi bu sessionu sonlandırmak için bir logout yazmamız gerekecek.
             //Ama birkez daha giriş yapmak isterse aynı kullanıcı daha önceki sessionların activlerini kontrol eder ve yoksa bir şey yapmaz varsa kapatır.
-            //UserId nasıl eklenecek bunu bulmam lazım!!Register olduğunda zaten bir userId elimizde olacak.
             //Expire süresi sonsuz olacak şekilde ayarlanacak.
             //Anlık kullanıcının sessionla beraber tüm bilgilerini dönderen bir servis yazılacak.
-            //Claimlere bakmak gerekli!!!
+           
         }
         public DataResult<User> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -170,6 +219,22 @@ namespace ReservationApp.BusinessUnit
                 return new ErrorDataResult<Session>(ConstantsMessages.LoginError);
             }
             return new SuccessDataResult<Session>(session,ConstantsMessages.CityAdded);
+        }
+        public Result Logout(string token)
+        {
+            var session = _authDataAccess.GetActiveSession(token);
+            if (session == null)
+            {
+                return new ErrorResult(ConstantsMessages.SessionNotFound);
+            }
+            session.IsActive = false;
+            var logoutResult = _authDataAccess.SessionUpdate(session);
+            if(logoutResult > 0)
+            {
+                return new SuccessResult(ConstantsMessages.LogoutSuccess);              
+            }
+            return new ErrorResult(ConstantsMessages.LogoutFailed);
+
         }
     }
 }
