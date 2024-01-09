@@ -16,6 +16,7 @@ namespace ReservationApp.Context
         public DbSet<Company> Companies { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<CompanyPhoto> CompanyPhotos { get; set; }
+        public DbSet<Session> Sessions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

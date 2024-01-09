@@ -15,5 +15,6 @@ namespace ReservationApp.BusinessUnit.Interfaces
         public bool UserExist(string email);
 
         public DataResult<string> Login(UserForLoginDto userForLoginDto);
+        DataResult<Session> GetActiveSessionByToken(string token);
     }
 }

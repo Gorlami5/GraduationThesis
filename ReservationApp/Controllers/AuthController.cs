@@ -31,6 +31,14 @@ namespace ReservationApp.Controllers
             var result = _authBusinessUnit.Login(userForLoginDto);
             return result;
         }
+        [HttpGet]
+        [Route("GetCurrentSession")]
+        public DataResult<Session> GetCurrentSession(string token)
+        {
+            var result = _authBusinessUnit.GetActiveSessionByToken(token);
+            return result;
+        }
+
 
     }
 }

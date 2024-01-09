@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReservationApp.Context;
@@ -11,9 +12,11 @@ using ReservationApp.Context;
 namespace ReservationApp.Migrations
 {
     [DbContext(typeof(PostgreDbConnection))]
-    partial class PostgreDbConnectionModelSnapshot : ModelSnapshot
+    [Migration("20240109144529_mig-7")]
+    partial class mig7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,10 +199,11 @@ namespace ReservationApp.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AccessToken")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CreateDate")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");

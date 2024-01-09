@@ -49,6 +49,8 @@ namespace ReservationApp.Controllers
             //}
             var result = _photoBusinessUnit.AddCompanyPhotoForCompany(companyId, companyPhotoForCreationDto);
             return result;
+            //Photo eklemek için basit bir frontend yazıalcak.
+            //claimler ile ilgili yazılan taraflar silinecek.
         }
         [HttpGet]
         [Route("GetCompanyPhoto")]

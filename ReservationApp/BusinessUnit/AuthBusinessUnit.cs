@@ -43,6 +43,7 @@ namespace ReservationApp.BusinessUnit
         public DataResult<string> Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin = UserForLogin(userForLoginDto.Email, userForLoginDto.Password);
+            int userId2 = userToLogin.Data.Id;
             if (userToLogin == null)
             {
                 return new ErrorDataResult<string>(ConstantsMessages.LoginError);
@@ -56,12 +57,64 @@ namespace ReservationApp.BusinessUnit
                     new Claim (ClaimTypes.NameIdentifier, userToLogin.Data.Id.ToString()),
                     new Claim (ClaimTypes.Email,userToLogin.Data.Email)
                }),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(10000),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
+
+            DateTime myDateTime = DateTime.Now;
+            string formattedDateTime = myDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            var emptySession = new Session()
+            {
+                CreateDate = formattedDateTime,
+            };
+            var emptySessionResult = _authDataAccess.SessionCreate(emptySession);
+            if(emptySessionResult < 1)
+            {
+                return new ErrorDataResult<string>(ConstantsMessages.alreadyExistsCity);
+            }
+            var oldSession = _authDataAccess.GetActiveSessionByUserId(userId2);
+            if (oldSession != null)
+            {
+                oldSession.IsActive = false;
+                var sessionUpdateResult = _authDataAccess.SessionUpdate(oldSession);
+                if(sessionUpdateResult < 1)
+                {
+                    return new ErrorDataResult<string>(ConstantsMessages.alreadyExistsCity);
+                }
+            }
+            emptySession.AccessToken = tokenString;
+            emptySession.UserId = userId2;
+            emptySession.IsActive = true;
+            
+
+            var sessionResult = _authDataAccess.SessionUpdate(emptySession);
+
+            //var session = new Session()
+            //{
+            //    AccessToken = tokenString,
+            //    CreateDate = DateTime.Now,
+            //    IsActive = true,
+            //    UserId = userToLogin.Data.Id
+            //};
+
+            //var sessionResult = _authDataAccess.SessionCreate(session);
+            if (sessionResult < 1)
+            {
+                return new ErrorDataResult<string>(ConstantsMessages.alreadyExistsCity);
+            }
+
             return new SuccessDataResult<string>(tokenString,ConstantsMessages.LoginSuccess);
+
+
+            //Login olunduğu durumda bir session oluşturulacak.Session tablosuna yeni bir session eklenecek.Active true olacak.
+            //Tabi bu sessionu sonlandırmak için bir logout yazmamız gerekecek.
+            //Ama birkez daha giriş yapmak isterse aynı kullanıcı daha önceki sessionların activlerini kontrol eder ve yoksa bir şey yapmaz varsa kapatır.
+            //UserId nasıl eklenecek bunu bulmam lazım!!Register olduğunda zaten bir userId elimizde olacak.
+            //Expire süresi sonsuz olacak şekilde ayarlanacak.
+            //Anlık kullanıcının sessionla beraber tüm bilgilerini dönderen bir servis yazılacak.
+            //Claimlere bakmak gerekli!!!
         }
         public DataResult<User> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -108,6 +161,15 @@ namespace ReservationApp.BusinessUnit
                 return false;
             }
             return true;
+        }
+        public DataResult<Session> GetActiveSessionByToken(string token)
+        {
+            var session = _authDataAccess.GetActiveSession(token);
+            if(session == null)
+            {
+                return new ErrorDataResult<Session>(ConstantsMessages.LoginError);
+            }
+            return new SuccessDataResult<Session>(session,ConstantsMessages.CityAdded);
         }
     }
 }
