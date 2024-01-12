@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservationApp.BusinessUnit.Interfaces;
 using ReservationApp.Dto;
@@ -38,6 +39,7 @@ namespace ReservationApp.Controllers
             var result = _authBusinessUnit.GetActiveSessionByToken(token);
             return result;
         }
+        [Authorize]
         [HttpPost]
         [Route("Logout")]
         public Result Logout(string token)

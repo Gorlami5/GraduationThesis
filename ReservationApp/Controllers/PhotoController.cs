@@ -29,24 +29,14 @@ namespace ReservationApp.Controllers
         [HttpPost]
         [Route("AddPhotoForCity")]
         public DataResult<PhotoForReturnDto> AddPhotoForCity(int cityId,[FromBody] PhotoForCreationDto photoForCreationDto)
-        {
-            //var currentUserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value); //HttpContextAccessor B.U içersinde kullanamadım.
-            //if(currentUserId != cityId) 
-            //{
-            //    return new ErrorDataResult<PhotoForReturnDto>(ConstantsMessages.Unauthorize);
-            //}
+        {           
             var result = _photoBusinessUnit.AddPhotoForCity(cityId, photoForCreationDto);
             return result;            
         }
         [HttpPost]
         [Route("AddCompanyPhotoForCity")]
         public DataResult<CompanyPhotoForReturnDto> AddCompanyPhoto(int companyId, [FromBody] CompanyPhotoForCreationDto companyPhotoForCreationDto)
-        {
-            //var currentUserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value); //HttpContextAccessor B.U içersinde kullanamadım.
-            //if (currentUserId != companyId)
-            //{
-            //    return new ErrorDataResult<CompanyPhotoForReturnDto>(ConstantsMessages.Unauthorize);
-            //}
+        {           
             var result = _photoBusinessUnit.AddCompanyPhotoForCompany(companyId, companyPhotoForCreationDto);
             return result;
             //Photo eklemek için basit bir frontend yazıalcak.
