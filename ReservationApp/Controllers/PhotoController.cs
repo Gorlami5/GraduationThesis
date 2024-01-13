@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservationApp.BusinessUnit.Interfaces;
 using ReservationApp.Dto;
@@ -13,11 +14,11 @@ namespace ReservationApp.Controllers
     public class PhotoController : ControllerBase
     {
         private readonly IPhotoBusinessUnit _photoBusinessUnit;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public PhotoController(IPhotoBusinessUnit photoBusinessUnit,IHttpContextAccessor httpContextAccessor)
+        //private readonly IHttpContextAccessor _httpContextAccessor;
+        public PhotoController(IPhotoBusinessUnit photoBusinessUnit/*IHttpContextAccessor httpContextAccessor*/)
         {
                 _photoBusinessUnit = photoBusinessUnit;
-                _httpContextAccessor = httpContextAccessor;
+                //_httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         [Route("GetPhoto")]
@@ -26,10 +27,11 @@ namespace ReservationApp.Controllers
             var photoReturnDto = _photoBusinessUnit.GetPhotoById(id);
             return photoReturnDto;
         }
+        
         [HttpPost]
         [Route("AddPhotoForCity")]
         public DataResult<PhotoForReturnDto> AddPhotoForCity(int cityId,[FromBody] PhotoForCreationDto photoForCreationDto)
-        {           
+        {            
             var result = _photoBusinessUnit.AddPhotoForCity(cityId, photoForCreationDto);
             return result;            
         }

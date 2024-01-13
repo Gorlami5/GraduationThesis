@@ -60,7 +60,7 @@ namespace ReservationApp.BusinessUnit
                     Id = company.Id,
                     Name = company.Name,
                     Description = company.Description,
-                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url //null gelme durumuna bak.
+                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true)?.Url //null gelme durumuna bak.
                 };
 
             result.Add(companyForListDto);

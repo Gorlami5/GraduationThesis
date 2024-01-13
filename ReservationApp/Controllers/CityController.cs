@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservationApp.BusinessUnit.Interfaces;
 using ReservationApp.Dto;
 using ReservationApp.Model;
 using ReservationApp.Results;
+using System.Security.Claims;
 
 namespace ReservationApp.Controllers
 {
@@ -16,7 +18,7 @@ namespace ReservationApp.Controllers
         {
             _cityBusinessUnit = cityBusinessUnit;
         }
-
+        [Authorize]
         [HttpPost]
         [Route("Add")]
         public Results.IResult AddCity([FromBody] City city)
@@ -38,10 +40,12 @@ namespace ReservationApp.Controllers
             return _cityBusinessUnit.Update(updatedCity);
            
         }
+        [Authorize]
         [HttpGet]
         [Route("GetAllCities")]
         public Results.IDataResult<List<CityForListDto>> GetAllCities()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = _cityBusinessUnit.GetAllCities();
             return result;
         }

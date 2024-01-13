@@ -1,4 +1,5 @@
 ﻿using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using ReservationApp.BusinessUnit.Interfaces;
 using ReservationApp.DataAccessUnit.Interfaces;
 using ReservationApp.Dto;
@@ -6,14 +7,18 @@ using ReservationApp.Extensions;
 using ReservationApp.Model;
 using ReservationApp.Results;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 
 namespace ReservationApp.BusinessUnit
 {
+    
     public class CityBusinessUnit : ICityBusinessUnit
     {
         private readonly ICityDataAccess _cityDataAccess;
-        public CityBusinessUnit(ICityDataAccess cityDataAccess)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CityBusinessUnit(ICityDataAccess cityDataAccess,IHttpContextAccessor httpContextAccessor)
         {
+             _httpContextAccessor = httpContextAccessor;
              _cityDataAccess = cityDataAccess;
         }
         public Results.IResult Add(City city)
@@ -26,6 +31,11 @@ namespace ReservationApp.BusinessUnit
                 {
                     return new ErrorResult(ConstantsMessages.alreadyExistsCity);
                 }
+            }
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(userId != null)
+            {
+                city.UserId = int.Parse(userId);
             }
             var result = _cityDataAccess.Add(city);
             if(result > 0)
@@ -62,7 +72,7 @@ namespace ReservationApp.BusinessUnit
                     Id = city.Id,
                     Name = city.Name,
                     Description = city.Description,
-                    PhotoUrl = city.Photos.FirstOrDefault(p => p.IsMain == true).Url
+                    PhotoUrl = city.Photos.FirstOrDefault(p => p.IsMain == true)?.Url
                 };
                 
               cityForListDtos.Add(cityForList);

@@ -216,15 +216,15 @@ namespace ReservationApp.BusinessUnit
         }
         public DataResult<CompanyPhotoForReturnDto> GetCompanyPhotoById(int id)
         {
-            var photo = GetPhotoByCityId(id);
+            var photo = _photoDataAccess.GetCompanyPhotoByCityId(id);
             CompanyPhotoForReturnDto companyPhotoForReturnDto = new CompanyPhotoForReturnDto()
             {
-                Id = photo.Data.Id,
-                Url = photo.Data.Url,
-                Description = photo.Data.Description,
-                DateAdded = photo.Data.DateAdded,
-                PublicId = photo.Data.PublicId,
-                IsMain = photo.Data.IsMain,
+                Id = photo.Id,
+                Url = photo.Url,
+                Description = photo.Description,
+                DateAdded = photo.DateAdded,
+                PublicId = photo.PublicId,
+                IsMain = photo.IsMain
             };
             return new SuccessDataResult<CompanyPhotoForReturnDto>(companyPhotoForReturnDto);
 

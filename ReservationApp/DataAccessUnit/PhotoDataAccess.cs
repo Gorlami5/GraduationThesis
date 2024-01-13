@@ -22,6 +22,13 @@ namespace ReservationApp.DataAccessUnit
             var photo = _connection.Photos.Where(c => c.CityId == id).FirstOrDefault();
             return photo;
         }
+        public CompanyPhoto GetCompanyPhotoByCityId(int companyId)
+        {
+            var photo = _connection.CompanyPhotos.Where(c => c.CompanyId == companyId).FirstOrDefault();
+            return photo;
+        }
+
+
         public List<Photo> GetPhotoList()
         {
             var photos = _connection.Photos.ToList();
