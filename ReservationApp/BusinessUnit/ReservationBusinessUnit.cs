@@ -72,7 +72,7 @@ namespace ReservationApp.BusinessUnit
                            CompanyName = reservation.CompanyName,
                            ReservationStartDate = reservation.ReservationStartDate,
                            ReservationEndDate = reservation.ReservationEndDate,
-                           Url = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url, //Logic hatası var bu photo durumunda
+                           PersonCount = reservation.PersonCount
                        };
                     reservationList.Add(reservationDto);
                 }

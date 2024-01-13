@@ -29,6 +29,8 @@ builder.Services.AddScoped<ICityDataAccess, CityDataAccess>();
 builder.Services.AddScoped<IPhotoDataAccess, PhotoDataAccess>();
 builder.Services.AddScoped<IReservationDataAccess, ReservationDataAccess>();
 builder.Services.AddScoped<IReservationBusinessUnit, ReservationBusinessUnit>();
+builder.Services.AddScoped<ICompanyDataAccess,CompanyDataAccess>();
+builder.Services.AddScoped<ICompanyBusinessUnit,CompanyBusinessUnit>();
 builder.Services.AddDbContext<PostgreDbConnection>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.Configure<CloudinaryInformation>(builder.Configuration.GetSection("CloudinaryInformation"));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
