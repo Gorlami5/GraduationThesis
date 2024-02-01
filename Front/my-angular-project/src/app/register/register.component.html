@@ -1,0 +1,20 @@
+<p>register works!</p>
+<form #registerForm = "ngForm" (ngSubmit) = "register()">
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="name"  [(ngModel)] ="register.name"  ngModel required>
+      </div>
+      <div>
+        <label for="username">Surname:</label>
+        <input type="text" name="surname"  [(ngModel)] ="register.surname" ngModel required>
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" name="email"  [(ngModel)] ="register.email" ngModel required>
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" name="password"  [(ngModel)] ="register.password" ngModel required>
+      </div>
+
+</form>

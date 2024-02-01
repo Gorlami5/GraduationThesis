@@ -39,5 +39,10 @@ namespace ReservationApp.DataAccessUnit
             _connection.Add(photo);
             return _connection.SaveChanges();
         }
+        public int AddCompanyPhoto(CompanyPhoto photo)
+        {
+            _connection.Add(photo);
+            return _connection.SaveChanges();
+        }
     }
 }

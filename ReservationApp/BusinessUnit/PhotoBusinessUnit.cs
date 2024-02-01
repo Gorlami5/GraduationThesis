@@ -17,13 +17,15 @@ namespace ReservationApp.BusinessUnit
         private readonly IOptions<CloudinaryInformation> _cloudinarySettings;
         private Cloudinary cloudinary;
         private readonly ICityDataAccess _cityDataAccess;
+        private readonly ICompanyDataAccess _companyDataAccess;
         //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PhotoBusinessUnit(IPhotoDataAccess photoDataAccess,IOptions<CloudinaryInformation> cloudinarySettings, ICityDataAccess cityDataAccess /*IHttpContextAccessor httpContextAccessor*/)
+        public PhotoBusinessUnit(IPhotoDataAccess photoDataAccess,IOptions<CloudinaryInformation> cloudinarySettings, ICityDataAccess cityDataAccess,ICompanyDataAccess companyDataAccess /*IHttpContextAccessor httpContextAccessor*/)
         {
                 _photoDataAccess = photoDataAccess;
                 _cloudinarySettings = cloudinarySettings;
                 _cityDataAccess = cityDataAccess;
+                _companyDataAccess = companyDataAccess;
                 //_httpContextAccessor = httpContextAccessor;
 
 
@@ -137,12 +139,12 @@ namespace ReservationApp.BusinessUnit
 
 
         }
-        public DataResult<CompanyPhotoForReturnDto> AddCompanyPhotoForCompany(int cityId, CompanyPhotoForCreationDto companyPhotoForCreationDto)
+        public DataResult<CompanyPhotoForReturnDto> AddCompanyPhotoForCompany(int companyId, CompanyPhotoForCreationDto companyPhotoForCreationDto)
         {
-            var city = _cityDataAccess.GetCityById(cityId);
-            if (city == null)
+            var company = _companyDataAccess.GetCompanyById(companyId);
+            if (company == null)
             {
-                return new ErrorDataResult<CompanyPhotoForReturnDto>(ConstantsMessages.CityNotFound);
+                return new ErrorDataResult<CompanyPhotoForReturnDto>(ConstantsMessages.CompanyNotFound);
             }
             //var currentuserıd = int.parse(_httpcontextaccessor.httpcontext.user.findfirst(claimtypes.nameıdentifier).value);
 
@@ -168,30 +170,30 @@ namespace ReservationApp.BusinessUnit
             companyPhotoForCreationDto.Url = uploadResult.Uri.ToString();
             companyPhotoForCreationDto.PublicId = uploadResult.PublicId;
 
-            Photo photo = new Photo()
+            CompanyPhoto companyPhoto = new CompanyPhoto()
             {
                 Url = companyPhotoForCreationDto.Url,
                 Description = companyPhotoForCreationDto.Description,
                 DateAdded = companyPhotoForCreationDto.DateAdded,
                 PublicId = companyPhotoForCreationDto.PublicId,
-                City = city
+                Company = company
             };
-            if (!city.Photos.Any(p => p.IsMain))
+            if (!company.CompanyPhotos.Any(p => p.IsMain))
             {
-                photo.IsMain = true;
+                companyPhoto.IsMain = true;
             }
-            var result = _photoDataAccess.AddPhoto(photo);
+            var result = _photoDataAccess.AddCompanyPhoto(companyPhoto);
             if (result > 0)
             {
 
                 CompanyPhotoForReturnDto companyPhotoForReturnDto = new CompanyPhotoForReturnDto()
                 {
-                    Id = photo.Id,
-                    Url = photo.Url,
-                    Description = photo.Description,
-                    DateAdded = photo.DateAdded,
-                    PublicId = photo.PublicId,
-                    IsMain = photo.IsMain,
+                    Id = companyPhoto.Id,
+                    Url = companyPhoto.Url,
+                    Description = companyPhoto.Description,
+                    DateAdded = companyPhoto.DateAdded,
+                    PublicId = companyPhoto.PublicId,
+                    IsMain = companyPhoto.IsMain,
                 };
 
                 return new SuccessDataResult<CompanyPhotoForReturnDto>(companyPhotoForReturnDto, ConstantsMessages.PhotoAdded);
@@ -228,6 +230,15 @@ namespace ReservationApp.BusinessUnit
             };
             return new SuccessDataResult<CompanyPhotoForReturnDto>(companyPhotoForReturnDto);
 
+        }
+        public Result AddPhoto(Photo photo)
+        {
+            var photoResult = _photoDataAccess.AddPhoto(photo);
+            if(photoResult > 0)
+            {
+                return new SuccessResult("Photo added");
+            }
+            return new ErrorResult("Photo error");
         }
     }
 }

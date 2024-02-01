@@ -9,5 +9,6 @@ namespace ReservationApp.DataAccessUnit.Interfaces
         public List<Photo> GetPhotoList();
         public int AddPhoto(Photo photo);
         CompanyPhoto GetCompanyPhotoByCityId(int companyId);
+        int AddCompanyPhoto(CompanyPhoto photo);
     }
 }

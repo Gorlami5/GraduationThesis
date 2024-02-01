@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ReservationApp.BusinessUnit.Interfaces;
 using ReservationApp.Dto;
 using ReservationApp.Extensions;
+using ReservationApp.Model;
 using ReservationApp.Results;
 using System.Security.Claims;
 
@@ -30,19 +31,17 @@ namespace ReservationApp.Controllers
         
         [HttpPost]
         [Route("AddPhotoForCity")]
-        public DataResult<PhotoForReturnDto> AddPhotoForCity(int cityId,[FromBody] PhotoForCreationDto photoForCreationDto)
+        public DataResult<PhotoForReturnDto> AddPhotoForCity(int cityId,[FromForm] PhotoForCreationDto photoForCreationDto)
         {            
             var result = _photoBusinessUnit.AddPhotoForCity(cityId, photoForCreationDto);
             return result;            
         }
         [HttpPost]
-        [Route("AddCompanyPhotoForCity")]
-        public DataResult<CompanyPhotoForReturnDto> AddCompanyPhoto(int companyId, [FromBody] CompanyPhotoForCreationDto companyPhotoForCreationDto)
+        [Route("AddCompanyPhotoForCompany")]
+        public DataResult<CompanyPhotoForReturnDto> AddCompanyPhoto(int companyId, [FromForm] CompanyPhotoForCreationDto companyPhotoForCreationDto)
         {           
             var result = _photoBusinessUnit.AddCompanyPhotoForCompany(companyId, companyPhotoForCreationDto);
             return result;
-            //Photo eklemek için basit bir frontend yazıalcak.
-            //claimler ile ilgili yazılan taraflar silinecek.
         }
         [HttpGet]
         [Route("GetCompanyPhoto")]
@@ -50,6 +49,16 @@ namespace ReservationApp.Controllers
         {
             var photoReturnDto = _photoBusinessUnit.GetCompanyPhotoById(id);
             return photoReturnDto;
+        }
+        [HttpPost]
+        [Route("AddPhotoForCityDemo")]
+        public Result AddCompanyPhotoForCityDemo(Photo photo)
+        {
+            var result = _photoBusinessUnit.AddPhoto(photo);
+            return result;
+            
+            //Photo eklemek için basit bir frontend yazıalcak.
+            //claimler ile ilgili yazılan taraflar silinecek.
         }
     }
 }

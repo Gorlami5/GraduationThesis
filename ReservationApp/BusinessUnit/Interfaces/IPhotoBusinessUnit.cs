@@ -13,5 +13,6 @@ namespace ReservationApp.BusinessUnit.Interfaces
         DataResult<CompanyPhotoForReturnDto> AddCompanyPhotoForCompany(int cityId, CompanyPhotoForCreationDto companyPhotoForCreationDto);
         DataResult<Photo> GetCompanyPhotoByCompanyId(int companyId);
         DataResult<CompanyPhotoForReturnDto> GetCompanyPhotoById(int id);
+        Result AddPhoto(Photo photo);
     }
 }
