@@ -48,6 +48,7 @@
         public static string SessionNotFound = "Session not found";
         public static string LogoutSuccess = "Logout success";
         public static string LogoutFailed = "Logout failed";
+        public static string SessionListed = "Active session listed";
 
     }
 }

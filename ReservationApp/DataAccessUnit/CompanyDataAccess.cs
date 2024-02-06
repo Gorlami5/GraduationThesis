@@ -49,7 +49,7 @@ namespace ReservationApp.DataAccessUnit
         }
         public City GetCityById(int id)
         {
-            var city = _connection.Cities.Where(c => c.Id == id).FirstOrDefault();
+            var city = _connection.Cities.Where(c => c.Id == id)?.FirstOrDefault();
             return city;
         }
     }

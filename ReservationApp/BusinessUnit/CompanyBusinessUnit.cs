@@ -18,6 +18,11 @@ namespace ReservationApp.BusinessUnit
         }
         public Result Add(Company company)
         {
+            var city = _companyDataAccess.GetCityById(company.CityId);
+            if(city == null)
+            {
+                return new ErrorResult(ConstantsMessages.CompanyAddError);
+            }
             var company1 = _companyDataAccess.GetCompanyById(company.Id);
             if(company1 != null)
             {
@@ -94,7 +99,7 @@ namespace ReservationApp.BusinessUnit
                     Id = company.Id,
                     Name = company.Name,
                     Description = company.Description,
-                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true).Url
+                    PhotoUrl = company.CompanyPhotos.FirstOrDefault(p => p.IsMain == true)?.Url
                    
                 };
 

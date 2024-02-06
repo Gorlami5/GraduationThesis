@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReservationApp.BusinessUnit;
 using ReservationApp.BusinessUnit.Interfaces;
@@ -17,6 +18,7 @@ namespace ReservationApp.Controllers
         {
             _reservationBusinessUnit = reservationBusinessUnit;
         }
+        [Authorize]
         [HttpPost]
         [Route("AddReservation")]
         public Result AddReservation([FromBody] Reservation reservation)
@@ -24,6 +26,7 @@ namespace ReservationApp.Controllers
             var result = _reservationBusinessUnit.AddReservation(reservation);
             return result;
         }
+        [Authorize]
         [HttpPost]
         [Route("UpdateReservation")]
         public Result UpdateReservation([FromBody] Reservation reservation)

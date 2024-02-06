@@ -4,19 +4,27 @@ using ReservationApp.Dto;
 using ReservationApp.Extensions;
 using ReservationApp.Model;
 using ReservationApp.Results;
+using System.Security.Claims;
 
 namespace ReservationApp.BusinessUnit
 {
     public class ReservationBusinessUnit:IReservationBusinessUnit
     {
         private readonly IReservationDataAccess _reservationDataAccess;
-        public ReservationBusinessUnit(IReservationDataAccess reservationDataAccess)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public ReservationBusinessUnit(IReservationDataAccess reservationDataAccess, IHttpContextAccessor contextAccessor)
         {
             _reservationDataAccess = reservationDataAccess;
+            _contextAccessor = contextAccessor;
         }
 
         public Result AddReservation(Reservation reservation)
         {
+            var userId = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(userId != null)
+            {
+                reservation.UserId = int.Parse(userId);
+            }          
             var reservations = _reservationDataAccess.GetAll();
             foreach(var res  in reservations)
             {
@@ -97,6 +105,11 @@ namespace ReservationApp.BusinessUnit
 
         public Result UpdateReservation(Reservation updatedReservation)
         {
+            var userId = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId != null)
+            {
+                updatedReservation.UserId = int.Parse(userId);
+            }
             var result = _reservationDataAccess.Update(updatedReservation);
             if(result > 0)
             {
