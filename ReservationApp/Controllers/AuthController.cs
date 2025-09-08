@@ -5,6 +5,7 @@ using ReservationApp.BusinessUnit.Interfaces;
 using ReservationApp.Dto;
 using ReservationApp.Model;
 using ReservationApp.Results;
+using ReservationApp.Utilities.Filters;
 
 namespace ReservationApp.Controllers
 {
@@ -20,6 +21,7 @@ namespace ReservationApp.Controllers
 
         [HttpPost]
         [Route("Register")]
+        [ServiceFilter(typeof(FluentValidationActionFilter))]
         public DataResult<User> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
             var result = _authBusinessUnit.Register(userForRegisterDto);

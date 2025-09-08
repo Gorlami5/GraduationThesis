@@ -8,7 +8,9 @@ using ReservationApp.DataAccessUnit;
 using ReservationApp.DataAccessUnit.Interfaces;
 using ReservationApp.Extensions;
 using System.Text;
-using Newtonsoft.Json;
+using ReservationApp.Utilities.Filters;
+using ReservationApp.Utilities.Validator;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = builder.Configuration.GetSection("JWTSettings:Token").Value;
@@ -16,7 +18,12 @@ var ekey = Encoding.ASCII.GetBytes(key);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers(o =>
+//{
+//    o.Filters.Add<FluentValidationActionFilter>(); // global filter
+//});
+builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
+builder.Services.AddScoped<FluentValidationActionFilter>();
 builder.Services.AddControllers().AddNewtonsoftJson(opt =>
 {
     opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; // Newtonsoft referenceloophandling configuration
