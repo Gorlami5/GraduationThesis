@@ -216,9 +216,9 @@ namespace ReservationApp.BusinessUnit
             var session = _authDataAccess.GetActiveSession(token);
             if(session == null)
             {
-                return new ErrorDataResult<Session>(ConstantsMessages.LoginError);
+                return new ErrorDataResult<Session>(ConstantsMessages.SessionNotFound);
             }
-            return new SuccessDataResult<Session>(session,ConstantsMessages.CityAdded);
+            return new SuccessDataResult<Session>(session,ConstantsMessages.SessionListed);
         }
         public Result Logout(string token)
         {
